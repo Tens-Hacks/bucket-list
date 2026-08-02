@@ -11,6 +11,11 @@
     }
   </script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .card-swipe {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+  </style>
 </head>
 <body class="bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-gray-100 min-h-screen pb-12 font-sans transition-colors duration-300">
 
@@ -30,7 +35,7 @@
             id="login-input"
             placeholder="Tvoje jméno..."
             required
-            class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent text-center font-medium"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-400 text-center font-medium"
           />
         </div>
         <p id="login-error" class="text-rose-500 dark:text-rose-400 text-xs font-semibold hidden"></p>
@@ -57,7 +62,6 @@
         </div>
         
         <div class="flex items-center space-x-3">
-          <!-- Dark Mode Toggle -->
           <button 
             id="theme-toggle-btn"
             class="p-2 text-gray-400 hover:text-rose-500 dark:text-rose-400 dark:hover:text-rose-300 rounded-xl transition"
@@ -83,88 +87,111 @@
     </header>
 
     <main class="max-w-3xl mx-auto px-4 pt-6">
-      <!-- Actions -->
-      <div class="flex flex-wrap gap-3 mb-6 items-center justify-between">
-        <button
-          id="toggle-add-btn"
-          class="flex items-center space-x-2 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-rose-100 dark:shadow-rose-950/40 transition"
-        >
-          <i class="fa-solid fa-plus"></i>
-          <span id="add-btn-text">Přidat nový nápad</span>
+      
+      <!-- NAVIGATION TABS (Tinder vs Seznam) -->
+      <div class="flex justify-center mb-6 border-b border-gray-200 dark:border-slate-800">
+        <button id="view-tinder-btn" class="px-6 py-2.5 font-bold text-sm border-b-2 border-rose-500 text-rose-500 flex items-center space-x-2">
+          <i class="fa-solid fa-fire text-rose-500"></i>
+          <span>Tinder Mód</span>
         </button>
-
-        <button
-          id="random-btn"
-          class="flex items-center space-x-2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-purple-100 dark:shadow-purple-950/40 transition"
-        >
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
-          <span>Vylosovat rande</span>
+        <button id="view-list-btn" class="px-6 py-2.5 font-bold text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center space-x-2">
+          <i class="fa-solid fa-list-ul"></i>
+          <span>Přehled nápadů</span>
         </button>
       </div>
 
-      <!-- Add Form Modal/Box -->
-      <div id="add-form-container" class="hidden mb-6 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-rose-100 dark:border-slate-700 shadow-sm">
-        <h3 id="add-form-title" class="text-sm font-semibold text-gray-500 dark:text-rose-300 mb-2">Nový nápad</h3>
-        <form id="add-idea-form" class="flex flex-col sm:flex-row gap-2">
-          <input
-            type="text"
-            id="idea-text-input"
-            placeholder="Co podnikneme?..."
-            required
-            class="flex-1 px-4 py-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-400"
-          />
-          <div class="flex gap-2">
-            <button
-              type="submit"
-              class="bg-rose-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-rose-600 transition flex-1 sm:flex-none"
-            >
-              Uložit
-            </button>
-            <button
-              type="button"
-              id="cancel-add-btn"
-              class="bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-300 px-4 py-2 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-slate-600 transition"
-            >
-              Zrušit
-            </button>
-          </div>
-        </form>
+      <!-- TINDER MODE SECTION -->
+      <div id="tinder-section" class="max-w-md mx-auto">
+        <div id="tinder-card-container" class="relative h-80 w-full flex items-center justify-center">
+          <!-- Dynamicky vkládaná karta -->
+        </div>
+
+        <div id="tinder-controls" class="flex justify-center items-center space-x-6 mt-6">
+          <button onclick="handleTinderSwipe(false)" class="w-16 h-16 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 text-rose-500 rounded-full shadow-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center justify-center text-2xl transition transform hover:scale-110">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <button onclick="handleTinderSwipe(true)" class="w-16 h-16 bg-rose-500 text-white rounded-full shadow-lg shadow-rose-200 dark:shadow-rose-950/50 hover:bg-rose-600 flex items-center justify-center text-2xl transition transform hover:scale-110">
+            <i class="fa-solid fa-heart"></i>
+          </button>
+        </div>
       </div>
 
-      <!-- Filters -->
-      <div class="flex space-x-2 border-b border-gray-200 dark:border-slate-800 mb-6 pb-2 overflow-x-auto">
-        <button data-filter="all" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap bg-white dark:bg-slate-800 text-rose-500 shadow-sm border border-gray-100 dark:border-slate-700">
-          Všechny
-        </button>
-        <button data-filter="pending" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
-          Čeká na schválení
-        </button>
-        <button data-filter="approved" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
-          Schválené
-        </button>
-        <button data-filter="rejected" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
-          Zamítnuté
-        </button>
+      <!-- LIST MODE SECTION -->
+      <div id="list-section" class="hidden">
+        <!-- Actions -->
+        <div class="flex flex-wrap gap-3 mb-6 items-center justify-between">
+          <button
+            id="toggle-add-btn"
+            class="flex items-center space-x-2 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-rose-100 dark:shadow-rose-950/40 transition"
+          >
+            <i class="fa-solid fa-plus"></i>
+            <span id="add-btn-text">Přidat nový nápad</span>
+          </button>
+
+          <button
+            id="random-btn"
+            class="flex items-center space-x-2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-purple-100 dark:shadow-purple-950/40 transition"
+          >
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Vylosovat rande</span>
+          </button>
+        </div>
+
+        <!-- Add Form Modal/Box -->
+        <div id="add-form-container" class="hidden mb-6 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-rose-100 dark:border-slate-700 shadow-sm">
+          <h3 id="add-form-title" class="text-sm font-semibold text-gray-500 dark:text-rose-300 mb-2">Nový nápad</h3>
+          <form id="add-idea-form" class="flex flex-col sm:flex-row gap-2">
+            <input
+              type="text"
+              id="idea-text-input"
+              placeholder="Co podnikneme?..."
+              required
+              class="flex-1 px-4 py-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-400"
+            />
+            <div class="flex gap-2">
+              <button type="submit" class="bg-rose-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-rose-600 transition flex-1 sm:flex-none">
+                Uložit
+              </button>
+              <button type="button" id="cancel-add-btn" class="bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-300 px-4 py-2 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-slate-600 transition">
+                Zrušit
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Filters -->
+        <div class="flex space-x-2 border-b border-gray-200 dark:border-slate-800 mb-6 pb-2 overflow-x-auto">
+          <button data-filter="all" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap bg-white dark:bg-slate-800 text-rose-500 shadow-sm border border-gray-100 dark:border-slate-700">
+            Všechny
+          </button>
+          <button data-filter="pending" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+            Čeká na schválení
+          </button>
+          <button data-filter="approved" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+            Schválené
+          </button>
+          <button data-filter="rejected" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+            Zamítnuté
+          </button>
+        </div>
+
+        <!-- Ideas List -->
+        <div id="ideas-list" class="space-y-3"></div>
       </div>
 
-      <!-- Ideas List -->
-      <div id="ideas-list" class="space-y-3">
-        <!-- Generováno přes JS -->
-      </div>
     </main>
   </div>
 
   <script>
-    // Funny errors for invalid names
     const funnyErrors = [
-      "Stůj! Tady mají přístup jen zamilovaní! Ty mezi ne nepatříš ⛔",
+      "Stůj! Tady mají přístup jen zamilovaní! Ty mezi ně nepatříš ⛔",
       "Pěkný pokus, ale tohle je tajná zóna jen pro Jirku a Terezku! 🤫",
       "Přístup odepřen! Tento plánovač pojme jen dva vyvolené. 💖",
       "Chyba 404: Láska nenalezena. Zadej správné jméno! 😂"
     ];
 
-    // Default ideas list generator until 31.12.2026
-    function generateInitialIdeas() {
+    // Generátor nápadů až do 31.12.2026
+    function generateFullIdeas() {
       const baseIdeas = [
         'Piknik v parku s deskovkami',
         'Návštěva únikové hry',
@@ -184,8 +211,8 @@
       ];
 
       const result = [];
-      let currentDate = new Date(2026, 7, 1); // 1. srpna 2026
-      const endDate = new Date(2026, 11, 31); // 31. prosince 2026
+      let currentDate = new Date(2026, 7, 1); // Od srpna 2026
+      const endDate = new Date(2026, 11, 31); // Do 31. prosince 2026
       let idCounter = 1;
 
       while (currentDate <= endDate) {
@@ -196,15 +223,13 @@
           id: idCounter,
           text: text,
           createdBy: 'Jirka',
-          status: idCounter % 3 === 0 ? 'approved' : 'pending',
+          status: 'pending',
           date: formattedDate
         });
 
-        // Přidáme týden (7 dní) pro další nápad
         currentDate.setDate(currentDate.getDate() + 7);
         idCounter++;
       }
-
       return result;
     }
 
@@ -213,8 +238,13 @@
     let currentFilter = 'all';
     let isDarkMode = localStorage.getItem('rande_theme') === 'dark';
 
-    // Fetch initial ideas or load saved ones
-    let ideas = JSON.parse(localStorage.getItem('rande_napady_jirka')) || generateInitialIdeas();
+    // Načtení dat (pokud je starý seznam moc krátký, automaticky dogenerujeme do 31.12.2026)
+    let saved = localStorage.getItem('rande_napady_jirka');
+    let ideas = saved ? JSON.parse(saved) : generateFullIdeas();
+    if (ideas.length < 10) {
+      ideas = generateFullIdeas();
+      localStorage.setItem('rande_napady_jirka', JSON.stringify(ideas));
+    }
 
     // DOM Elements
     const loginScreen = document.getElementById('login-screen');
@@ -224,6 +254,12 @@
     const loginError = document.getElementById('login-error');
     const userDisplay = document.getElementById('user-display');
     const logoutBtn = document.getElementById('logout-btn');
+
+    const viewTinderBtn = document.getElementById('view-tinder-btn');
+    const viewListBtn = document.getElementById('view-list-btn');
+    const tinderSection = document.getElementById('tinder-section');
+    const listSection = document.getElementById('list-section');
+
     const toggleAddBtn = document.getElementById('toggle-add-btn');
     const addBtnText = document.getElementById('add-btn-text');
     const addFormContainer = document.getElementById('add-form-container');
@@ -237,7 +273,7 @@
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const themeIcon = document.getElementById('theme-icon');
 
-    // Init Theme
+    // Theme Toggle
     function applyTheme() {
       if (isDarkMode) {
         document.documentElement.classList.add('dark');
@@ -254,7 +290,23 @@
       applyTheme();
     });
 
-    // Init App
+    // Navigation Switcher
+    viewTinderBtn.addEventListener('click', () => {
+      tinderSection.classList.remove('hidden');
+      listSection.classList.add('hidden');
+      viewTinderBtn.className = "px-6 py-2.5 font-bold text-sm border-b-2 border-rose-500 text-rose-500 flex items-center space-x-2";
+      viewListBtn.className = "px-6 py-2.5 font-bold text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center space-x-2";
+      renderTinder();
+    });
+
+    viewListBtn.addEventListener('click', () => {
+      listSection.classList.remove('hidden');
+      tinderSection.classList.add('hidden');
+      viewListBtn.className = "px-6 py-2.5 font-bold text-sm border-b-2 border-rose-500 text-rose-500 flex items-center space-x-2";
+      viewTinderBtn.className = "px-6 py-2.5 font-bold text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center space-x-2";
+      renderIdeas();
+    });
+
     function init() {
       applyTheme();
       if (currentUser) {
@@ -279,10 +331,10 @@
       userDisplay.textContent = currentUser;
       addBtnText.textContent = `Přidat nápad (${currentUser})`;
       addFormTitle.textContent = `Nový nápad (Autor: ${currentUser})`;
+      renderTinder();
       renderIdeas();
     }
 
-    // Login logic
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const inputVal = loginInput.value.trim();
@@ -293,8 +345,7 @@
       } else if (lowerVal === 'terezka') {
         currentUser = 'Terezka';
       } else {
-        const randomErr = funnyErrors[Math.floor(Math.random() * funnyErrors.length)];
-        loginError.textContent = randomErr;
+        loginError.textContent = funnyErrors[Math.floor(Math.random() * funnyErrors.length)];
         loginError.classList.remove('hidden');
         return;
       }
@@ -304,7 +355,6 @@
       showApp();
     });
 
-    // Logout logic
     logoutBtn.addEventListener('click', () => {
       currentUser = null;
       localStorage.removeItem('rande_user');
@@ -312,12 +362,73 @@
       showLogin();
     });
 
-    // Toggle Add Form
+    // Tinder Mode Logic
+    let currentTinderIdea = null;
+
+    function renderTinder() {
+      const container = document.getElementById('tinder-card-container');
+      const controls = document.getElementById('tinder-controls');
+      const pending = ideas.filter(i => i.status === 'pending');
+
+      if (pending.length === 0) {
+        container.innerHTML = `
+          <div class="text-center p-8 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-xl w-full">
+            <i class="fa-solid fa-heart-circle-check text-5xl text-rose-500 mb-4"></i>
+            <h3 class="text-xl font-bold mb-2">Všechno ohodnoceno!</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm">Žádné další nápady ke schválení. Přidej další nebo se podívej do přehledu!</p>
+          </div>
+        `;
+        controls.classList.add('hidden');
+        return;
+      }
+
+      controls.classList.remove('hidden');
+      currentTinderIdea = pending[0];
+
+      const isJirka = currentTinderIdea.createdBy === 'Jirka';
+      const badgeClass = isJirka 
+        ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300' 
+        : 'bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300';
+
+      container.innerHTML = `
+        <div class="card-swipe w-full bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-2xl rounded-3xl p-8 flex flex-col justify-between h-full">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-xs font-semibold px-3 py-1 rounded-full ${badgeClass}">
+                Navrhl: ${currentTinderIdea.createdBy}
+              </span>
+              <span class="text-xs text-gray-400"><i class="fa-regular fa-calendar mr-1"></i>${currentTinderIdea.date}</span>
+            </div>
+            <p class="text-2xl font-bold text-gray-800 dark:text-white mt-4 leading-snug">${currentTinderIdea.text}</p>
+          </div>
+          <p class="text-xs text-center text-gray-400 italic">Chceš tohle rande podniknout?</p>
+        </div>
+      `;
+    }
+
+    window.handleTinderSwipe = function(approved) {
+      if (!currentTinderIdea) return;
+      
+      const status = approved ? 'approved' : 'rejected';
+      ideas = ideas.map(i => i.id === currentTinderIdea.id ? { ...i, status } : i);
+      saveIdeas();
+
+      const card = document.querySelector('.card-swipe');
+      if (card) {
+        card.style.transform = approved ? 'translateX(200px) rotate(20deg)' : 'translateX(-200px) rotate(-20deg)';
+        card.style.opacity = '0';
+      }
+
+      setTimeout(() => {
+        renderTinder();
+        renderIdeas();
+      }, 250);
+    };
+
+    // List Logic & Add Idea
     toggleAddBtn.addEventListener('click', () => {
       addFormContainer.classList.toggle('hidden');
-      if (!addFormContainer.classList.contains('hidden')) {
-        ideaTextInput.focus();
-      }
+      if (!addFormContainer.classList.contains('hidden')) ideaTextInput.focus();
     });
 
     cancelAddBtn.addEventListener('click', () => {
@@ -325,7 +436,6 @@
       ideaTextInput.value = '';
     });
 
-    // Add New Idea
     addIdeaForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const text = ideaTextInput.value.trim();
@@ -334,7 +444,7 @@
       const newIdea = {
         id: Date.now(),
         text: text,
-        createdBy: currentUser, // Nastaví aktuálně přihlášeného (Jirka nebo Terezka)
+        createdBy: currentUser,
         status: 'pending',
         date: new Date().toISOString().split('T')[0]
       };
@@ -342,25 +452,23 @@
       ideas.unshift(newIdea);
       saveIdeas();
       renderIdeas();
+      renderTinder();
 
       ideaTextInput.value = '';
       addFormContainer.classList.add('hidden');
     });
 
-    // Filters
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         filterBtns.forEach(b => {
           b.className = "filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200";
         });
         btn.className = "filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap bg-white dark:bg-slate-800 text-rose-500 shadow-sm border border-gray-100 dark:border-slate-700";
-        
         currentFilter = btn.dataset.filter;
         renderIdeas();
       });
     });
 
-    // Randomizer
     randomBtn.addEventListener('click', () => {
       const available = ideas.filter(i => i.status !== 'rejected');
       if (available.length === 0) {
@@ -371,20 +479,20 @@
       alert(`Dnešní rande (${random.createdBy}): ${random.text}! 💕`);
     });
 
-    // Item Actions (Status, Delete)
     window.changeStatus = function(id, status) {
       ideas = ideas.map(idea => idea.id === id ? { ...idea, status } : idea);
       saveIdeas();
       renderIdeas();
+      renderTinder();
     };
 
     window.deleteIdea = function(id) {
       ideas = ideas.filter(idea => idea.id !== id);
       saveIdeas();
       renderIdeas();
+      renderTinder();
     };
 
-    // Render List
     function renderIdeas() {
       const filtered = ideas.filter(idea => {
         if (currentFilter === 'pending') return idea.status === 'pending';
@@ -433,7 +541,7 @@
         }
 
         const isJirka = idea.createdBy === 'Jirka';
-        const authorBadgeClass = isJirka 
+        const badgeClass = isJirka 
           ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300' 
           : 'bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300';
 
@@ -441,7 +549,7 @@
           <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-slate-700/60 shadow-sm flex items-center justify-between gap-4 transition-colors duration-300">
             <div class="flex-1">
               <div class="flex items-center space-x-2 mb-1">
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${authorBadgeClass}">
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${badgeClass}">
                   ${idea.createdBy}
                 </span>
                 <span class="text-xs text-gray-400 dark:text-slate-500">${idea.date}</span>
@@ -460,7 +568,6 @@
       }).join('');
     }
 
-    // Run app
     init();
   </script>
 </body>
