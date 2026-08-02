@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Náš Love & Future Bucket List</title>
+    <title>Náš Společný Bucket List 2026</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Pro Ikony -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -17,9 +17,9 @@
             background: radial-gradient(circle at top left, #1a0b2e, #090514);
             color: #f3e8ff;
             min-height: 100vh;
+            padding-bottom: 90px;
         }
 
-        /* Glassmorphism styling */
         .glass-panel {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(16px);
@@ -38,7 +38,6 @@
         .glass-card:hover {
             border-color: rgba(244, 114, 182, 0.4);
             box-shadow: 0 0 20px rgba(236, 72, 153, 0.2);
-            transform: translateY(-2px);
         }
 
         .neon-glow {
@@ -56,20 +55,71 @@
             transform: scale(1.02);
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        /* Swipe Card Deck Styling */
+        .card-container {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        ::-webkit-scrollbar-track {
-            background: #090514;
+
+        .swipe-card {
+            position: absolute;
+            width: 100%;
+            max-width: 360px;
+            height: 340px;
+            border-radius: 24px;
+            background: linear-gradient(145deg, rgba(35, 16, 60, 0.9), rgba(15, 7, 30, 0.95));
+            border: 1px solid rgba(244, 114, 182, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px;
+            user-select: none;
+            touch-action: none;
+            cursor: grab;
+            transition: transform 0.2s ease, opacity 0.2s ease;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #3b0764;
-            border-radius: 4px;
+
+        .swipe-card:active {
+            cursor: grabbing;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ec4899;
+
+        .stamp {
+            position: absolute;
+            top: 25px;
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0;
+            transition: opacity 0.1s ease;
+            pointer-events: none;
         }
+
+        .stamp-like {
+            right: 20px;
+            color: #4ade80;
+            border: 3px solid #4ade80;
+            transform: rotate(12deg);
+        }
+
+        .stamp-dislike {
+            left: 20px;
+            color: #f87171;
+            border: 3px solid #f87171;
+            transform: rotate(-12deg);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #090514; }
+        ::-webkit-scrollbar-thumb { background: #3b0764; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ec4899; }
     </style>
 </head>
 <body class="p-4 md:p-8 flex flex-col items-center justify-start relative overflow-x-hidden">
@@ -78,17 +128,21 @@
     <div class="fixed top-[-10%] left-[-10%] w-[400px] h-[400px] bg-pink-600/20 rounded-full blur-[120px] pointer-events-none"></div>
     <div class="fixed bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none"></div>
 
-    <!-- Login Modal Section -->
+    <!-- Login Modal -->
     <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
         <div class="glass-panel p-8 rounded-3xl max-w-md w-full mx-4 text-center border border-pink-500/30">
             <div class="w-16 h-16 bg-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-pink-500/40">
                 <i class="fa-solid fa-heart text-pink-500 text-2xl animate-pulse"></i>
             </div>
             <h2 class="text-3xl font-bold mb-2 neon-glow bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400">Vítejte!</h2>
-            <p class="text-gray-400 mb-6 text-sm">Kdo si prohlíží nebo přidává plány?</p>
+            <p class="text-gray-400 mb-6 text-sm">Vyber si nebo zadej své jméno</p>
             
             <div class="space-y-4">
-                <input type="text" id="username-input" placeholder="Zadej své jméno..." class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition">
+                <div class="grid grid-cols-2 gap-3 mb-2">
+                    <button onclick="quickLogin('Ondra')" class="py-2.5 px-4 rounded-xl bg-white/10 hover:bg-pink-500/30 border border-white/10 text-pink-300 font-semibold transition">Ondra</button>
+                    <button onclick="quickLogin('Terezka')" class="py-2.5 px-4 rounded-xl bg-white/10 hover:bg-pink-500/30 border border-white/10 text-pink-300 font-semibold transition">Terezka</button>
+                </div>
+                <input type="text" id="username-input" placeholder="Nebo napiš jméno..." class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition">
                 <button onclick="login()" class="w-full py-3 rounded-xl neon-btn font-bold text-white tracking-wide">Vstoupit do Bucket Listu</button>
             </div>
         </div>
@@ -98,83 +152,158 @@
     <div class="max-w-4xl w-full">
 
         <!-- Header -->
-        <header class="glass-panel rounded-3xl p-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4 border border-pink-500/20">
+        <header class="glass-panel rounded-3xl p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 border border-pink-500/20">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center shadow-lg shadow-pink-500/30">
-                    <i class="fa-solid fa-[#000] fa-heart text-white text-xl"></i>
+                    <i class="fa-solid fa-heart text-white text-xl"></i>
                 </div>
                 <div>
                     <h1 class="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 via-purple-300 to-indigo-400 neon-glow">
-                        Náš Společný Bucket List
+                        Náš Love & Match List
                     </h1>
-                    <p class="text-xs text-pink-300/70 font-medium">Karlovarsko & Naše dobrodružství 2026</p>
+                    <p class="text-xs text-pink-300/70 font-medium">Karlovarsko & Dobrodružství do konce roku 2026</p>
                 </div>
             </div>
 
             <div id="user-info" class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-2xl border border-white/10">
-                <span class="text-sm text-gray-300">Přihlášen: <strong id="current-user-display" class="text-pink-400">...</strong></span>
-                <button onclick="logout()" class="text-gray-400 hover:text-pink-400 transition text-sm ml-2" title="Odhlásit">
+                <span class="text-sm text-gray-300">Uživatel: <strong id="current-user-display" class="text-pink-400">...</strong></span>
+                <button onclick="logout()" class="text-gray-400 hover:text-pink-400 transition text-sm ml-2" title="Změnit uživatele">
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </button>
             </div>
         </header>
 
-        <!-- New Item Form -->
-        <section class="glass-panel rounded-3xl p-6 mb-8 border border-purple-500/20">
-            <h3 class="text-lg font-semibold mb-4 text-pink-300 flex items-center gap-2">
-                <i class="fa-solid fa-plus-circle"></i> Přidat nový cíl / aktivitu
-            </h3>
-            <form id="add-todo-form" onsubmit="handleAddTodo(event)" class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                <div class="md:col-span-5">
-                    <input type="text" id="todo-text" placeholder="Co podnikneme? (např. Východ slunce na Dianě)" required
-                        class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition">
-                </div>
-                <div class="md:col-span-4">
-                    <input type="date" id="todo-date" required
-                        class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-pink-500 transition">
-                </div>
-                <div class="md:col-span-3">
-                    <button type="submit" class="w-full h-full py-3 rounded-xl neon-btn font-bold text-white flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-sparkles"></i> Uložit
-                    </button>
-                </div>
-            </form>
-        </section>
+        <!-- Tab View Selector -->
+        <div class="flex bg-white/5 p-1.5 rounded-2xl border border-white/10 mb-6">
+            <button onclick="switchTab('list')" id="tab-btn-list" class="flex-1 py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg">
+                <i class="fa-solid fa-list-check"></i> Všechny plány & Shody
+            </button>
+            <button onclick="switchTab('tinder')" id="tab-btn-tinder" class="flex-1 py-3 rounded-xl font-bold text-sm transition text-gray-400 hover:text-white flex items-center justify-center gap-2">
+                <i class="fa-solid fa-fire text-pink-500 animate-bounce"></i> Tinder Mode (Swipování)
+            </button>
+        </div>
 
-        <!-- Bucket List Section -->
-        <section class="space-y-4">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-calendar-heart text-pink-500"></i> Naše plány
+        <!-- TAB 1: LIST VIEW -->
+        <div id="view-list" class="space-y-6">
+            <!-- Add New Idea Form -->
+            <section class="glass-panel rounded-3xl p-6 border border-purple-500/20">
+                <h3 class="text-lg font-semibold mb-4 text-pink-300 flex items-center gap-2">
+                    <i class="fa-solid fa-plus-circle"></i> Přidat nový nápad na aktivitu
+                </h3>
+                <form id="add-todo-form" onsubmit="handleAddTodo(event)" class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    <div class="md:col-span-5">
+                        <input type="text" id="todo-text" placeholder="Co podnikneme? (např. Saunový svět v Alžbětiných lázních)" required
+                            class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition">
+                    </div>
+                    <div class="md:col-span-4">
+                        <input type="date" id="todo-date" required
+                            class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-pink-500 transition">
+                    </div>
+                    <div class="md:col-span-3">
+                        <button type="submit" class="w-full h-full py-3 rounded-xl neon-btn font-bold text-white flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-sparkles"></i> Uložit
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Items List -->
+            <section class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-heart-circle-check text-pink-500"></i> Seznam aktivit
+                    </h2>
+                    <span id="todo-count" class="text-xs px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">0 položek</span>
+                </div>
+
+                <div id="todo-list" class="space-y-3">
+                    <!-- Dynamic rendering -->
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB 2: TINDER SWIPE VIEW -->
+        <div id="view-tinder" class="hidden flex flex-col items-center">
+            <div class="text-center mb-4">
+                <h2 class="text-2xl font-bold text-white flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-fire text-pink-500"></i> Tinder Nápadník
                 </h2>
-                <span id="todo-count" class="text-xs px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">0 položek</span>
+                <p class="text-xs text-gray-400 mt-1">Swipni vpravo pro super nápad, vlevo pro ne. Najděte společnou shodu!</p>
             </div>
 
-            <div id="todo-list" class="space-y-3">
-                <!-- Dynamicky generováno pomocí JS -->
+            <div class="card-container">
+                <div id="swipe-deck" class="w-full flex justify-center items-center">
+                    <!-- Dynamic swipe cards -->
+                </div>
             </div>
-        </section>
+
+            <!-- Swipe Action Buttons -->
+            <div class="flex items-center gap-6 mt-4">
+                <button onclick="handleButtonSwipe(false)" class="w-16 h-16 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500 hover:text-white flex items-center justify-center text-2xl transition shadow-lg shadow-red-500/20">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <button onclick="handleButtonSwipe(true)" class="w-16 h-16 rounded-full bg-green-500/20 border border-green-500/40 text-green-400 hover:bg-green-500 hover:text-white flex items-center justify-center text-2xl transition shadow-lg shadow-green-500/20">
+                    <i class="fa-solid fa-heart"></i>
+                </button>
+            </div>
+        </div>
 
     </div>
 
+    <!-- Bottom Navigation Bar (Mobile Friendly) -->
+    <nav class="fixed bottom-0 left-0 right-0 glass-panel border-t border-white/10 p-3 flex justify-around items-center z-40 md:hidden">
+        <button onclick="switchTab('list')" id="nav-btn-list" class="flex flex-col items-center text-pink-400 text-xs font-semibold gap-1">
+            <i class="fa-solid fa-list-check text-lg"></i>
+            <span>Seznam</span>
+        </button>
+        <button onclick="switchTab('tinder')" id="nav-btn-tinder" class="flex flex-col items-center text-gray-400 text-xs font-semibold gap-1">
+            <i class="fa-solid fa-fire text-lg"></i>
+            <span>Tinder Mode</span>
+        </button>
+    </nav>
+
     <script>
-        // Výchozí nápady pro Karlovarský kraj
         const defaultIdeas = [
-            { id: 1, text: "🌅 Východ slunce na rozhledně Diana s kávou", date: "2026-08-15", author: "Systém", completed: false },
-            { id: 2, text: "🚣 Sjezd Ohře na kanoích (Loket -> Karlovy Vary)", date: "2026-08-22", author: "Systém", completed: false },
-            { id: 3, text: "🏰 Západ slunce a večerní piknik u hradu Loket", date: "2026-08-28", author: "Systém", completed: false },
-            { id: 4, text: "🌲 Romantická procházka kolem rybníka Kladská", date: "2026-09-05", author: "Systém", completed: false },
-            { id: 5, text: "🌌 Pozorování hvězd na Božím Daru", date: "2026-09-08", author: "Systém", completed: false },
-            { id: 6, text: "✈️ Rozlučkový večer před odletem do Egypta", date: "2026-09-09", author: "Systém", completed: false },
-            { id: 7, text: "🇪🇬 Přítelkyně užívá Egypt! 🏝️", date: "2026-09-10", author: "Systém", completed: false },
-            { id: 8, text: "☕ Oslavný kavárenský maraton v KV po návratu", date: "2026-09-22", author: "Systém", completed: false },
-            { id: 9, text: "🎓 Příprava na start VŠ & společný relax", date: "2026-09-28", author: "Systém", completed: false }
+            // SMLUVENÉ A PŘED-EGYPT ODPOLEDNÍ / VÍKENDOVÉ
+            { id: 1, text: "🌅 Východ slunce na rozhledně Diana s kávou v termosce", date: "2026-08-15", author: "Ondra", completed: false, votes: { "Ondra": true } },
+            { id: 2, text: "🚣 Sjezd Ohře na kanoích (Loket -> Karlovy Vary)", date: "2026-08-22", author: "Systém", completed: false, votes: {} },
+            { id: 3, text: "🏰 Západ slunce a večerní piknik u hradu Loket", date: "2026-08-28", author: "Systém", completed: false, votes: {} },
+            { id: 4, text: "🌲 Romantická procházka kolem rybníka Kladská", date: "2026-09-05", author: "Terezka", completed: false, votes: { "Terezka": true } },
+            { id: 5, text: "🌌 Pozorování hvězd na Božím Daru", date: "2026-09-08", author: "Systém", completed: false, votes: {} },
+            { id: 6, text: "✈️ Rozlučkový večer před odletem do Egypta", date: "2026-09-09", author: "Ondra", completed: false, votes: { "Ondra": true } },
+            { id: 7, text: "☕ Oslavný kavárenský maraton v KV po návratu z Egypta", date: "2026-09-22", author: "Systém", completed: false, votes: {} },
+            { id: 8, text: "🧗 Zipline a lanové centrum na Plešivci", date: "2026-09-26", author: "Ondra", completed: false, votes: {} },
+            { id: 9, text: "🎓 Příprava na start VŠ & společný relaxní večer", date: "2026-09-28", author: "Terezka", completed: false, votes: {} },
+
+            // ŘÍJEN (VÍKENDOVÉ AKCE - VŠ ZAČALA)
+            { id: 10, text: "🍁 Podzimní výšlap na Svatošské skály & horká čokoláda v KV", date: "2026-10-10", author: "Systém", completed: false, votes: {} },
+            { id: 11, text: "🎃 Společné dlabání dýní & halloweenský filmový večer", date: "2026-10-24", author: "Systém", completed: false, votes: {} },
+            { id: 12, text: "🏰 Víkendový výlet na hrad a zámek Bečov nad Teplou", date: "2026-10-31", author: "Systém", completed: false, votes: {} },
+
+            // LISTOPAD (VÍKENDOVÉ AKCE)
+            { id: 13, text: "🧖 Relaxační odpoledne v saunovém světě / wellness v KV", date: "2026-11-07", author: "Systém", completed: false, votes: {} },
+            { id: 14, text: "🎳 Společné večerní bowlingové utkání & drinky", date: "2026-11-14", author: "Systém", completed: false, votes: {} },
+            { id: 15, text: "🍔 Burger night & společné vaření nové večeře", date: "2026-11-21", author: "Systém", completed: false, votes: {} },
+            { id: 16, text: "✨ Rozsvícení vánočního stromu & svařák na kolonádě v KV", date: "2026-11-29", author: "Systém", completed: false, votes: {} },
+
+            // PROSINEC DO 18.12. (VÍKENDY)
+            { id: 17, text: "🎄 Návštěva vánočních trhů v Karlových Varech", date: "2026-12-05", author: "Systém", completed: false, votes: {} },
+            { id: 18, text: "🍪 Pečení prvních společných vánočních perníčků", date: "2026-12-12", author: "Systém", completed: false, votes: {} },
+
+            // PROSINEC 18.12. - 31.12. (PRÁZDNINY TERKY - MŮŽE SE KDYKOLIV)
+            { id: 19, text: "⛸️ Společné bruslení na zimním stadionu nebo venkovním kluzišti", date: "2026-12-19", author: "Systém", completed: false, votes: {} },
+            { id: 20, text: "🎁 Vybírání posledních vánočních dárků & balení s pohádkami", date: "2026-12-21", author: "Systém", completed: false, votes: {} },
+            { id: 21, text: "⛷️ První zimní lyžovačka nebo koulovačka na Klínovci / Božím Daru", date: "2026-12-23", author: "Systém", completed: false, votes: {} },
+            { id: 22, text: "🎄 Štědrodenní dopolední procházka zasněženými Karlovými Vary", date: "2026-12-24", author: "Systém", completed: false, votes: {} },
+            { id: 23, text: "🎥 Sváteční maraton pohádek a vánočních filmů v pyžamu", date: "2026-12-26", author: "Systém", completed: false, votes: {} },
+            { id: 24, text: "🏔️ Zimní výšlap na Plešivec & horký svařák na vrcholu", date: "2026-12-29", author: "Systém", completed: false, votes: {} },
+            { id: 25, text: "🎆 Oslava Silvestra 2026 & společný přípitek do nového roku", date: "2026-12-31", author: "Systém", completed: false, votes: {} }
         ];
 
         let currentUser = localStorage.getItem('bucket_user') || '';
         let todos = JSON.parse(localStorage.getItem('bucket_todos')) || defaultIdeas;
+        let currentTab = 'list';
 
-        // Inicilalizace při načtení
         window.onload = function() {
             if (currentUser) {
                 document.getElementById('login-modal').classList.add('hidden');
@@ -185,6 +314,11 @@
             renderTodos();
         };
 
+        function quickLogin(name) {
+            document.getElementById('username-input').value = name;
+            login();
+        }
+
         function login() {
             const input = document.getElementById('username-input').value.trim();
             if (input) {
@@ -192,6 +326,8 @@
                 localStorage.setItem('bucket_user', currentUser);
                 document.getElementById('current-user-display').innerText = currentUser;
                 document.getElementById('login-modal').classList.add('hidden');
+                renderTodos();
+                if (currentTab === 'tinder') renderTinderDeck();
             }
         }
 
@@ -199,6 +335,39 @@
             localStorage.removeItem('bucket_user');
             currentUser = '';
             document.getElementById('login-modal').classList.remove('hidden');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const viewList = document.getElementById('view-list');
+            const viewTinder = document.getElementById('view-tinder');
+
+            const btnList = document.getElementById('tab-btn-list');
+            const btnTinder = document.getElementById('tab-btn-tinder');
+            const navList = document.getElementById('nav-btn-list');
+            const navTinder = document.getElementById('nav-btn-tinder');
+
+            if (tab === 'list') {
+                viewList.classList.remove('hidden');
+                viewTinder.classList.add('hidden');
+                
+                btnList.className = "flex-1 py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg";
+                btnTinder.className = "flex-1 py-3 rounded-xl font-bold text-sm transition text-gray-400 hover:text-white flex items-center justify-center gap-2";
+                
+                if (navList) navList.className = "flex flex-col items-center text-pink-400 text-xs font-semibold gap-1";
+                if (navTinder) navTinder.className = "flex flex-col items-center text-gray-400 text-xs font-semibold gap-1";
+                renderTodos();
+            } else {
+                viewList.classList.add('hidden');
+                viewTinder.classList.remove('hidden');
+
+                btnTinder.className = "flex-1 py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg";
+                btnList.className = "flex-1 py-3 rounded-xl font-bold text-sm transition text-gray-400 hover:text-white flex items-center justify-center gap-2";
+
+                if (navTinder) navTinder.className = "flex flex-col items-center text-pink-400 text-xs font-semibold gap-1";
+                if (navList) navList.className = "flex flex-col items-center text-gray-400 text-xs font-semibold gap-1";
+                renderTinderDeck();
+            }
         }
 
         function handleAddTodo(e) {
@@ -211,7 +380,8 @@
                 text: textInput.value.trim(),
                 date: dateInput.value,
                 author: currentUser,
-                completed: false
+                completed: false,
+                votes: { [currentUser]: true } // Autor automaticky lajkuje
             };
 
             todos.push(newTodo);
@@ -237,10 +407,10 @@
         }
 
         function saveAndRender() {
-            // Řazení podle data
             todos.sort((a, b) => new Date(a.date) - new Date(b.date));
             localStorage.setItem('bucket_todos', JSON.stringify(todos));
             renderTodos();
+            if (currentTab === 'tinder') renderTinderDeck();
         }
 
         function formatDate(dateStr) {
@@ -267,8 +437,33 @@
             }
 
             todos.forEach(todo => {
+                const votes = todo.votes || {};
+                const voters = Object.keys(votes);
+                const likedVoters = voters.filter(v => votes[v] === true);
+
+                const isMatch = likedVoters.length >= 2;
+
                 const card = document.createElement('div');
-                card.className = `glass-card p-4 rounded-2xl flex items-center justify-between gap-4 ${todo.completed ? 'opacity-50' : ''}`;
+                card.className = `glass-card p-4 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${todo.completed ? 'opacity-50' : ''} ${isMatch ? 'border-pink-500/60 bg-pink-500/5 shadow-lg shadow-pink-500/10' : ''}`;
+
+                let statusBadge = '';
+                if (isMatch) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-pink-500/20 text-pink-300 border border-pink-500/40 animate-pulse"><i class="fa-solid fa-fire text-pink-400"></i> SPOLEČNÁ SHODA!</span>`;
+                }
+
+                let voteDetailsHtml = '<div class="flex flex-wrap gap-2 text-xs mt-2 md:mt-0">';
+                if (voters.length === 0) {
+                    voteDetailsHtml += `<span class="text-gray-500 italic">Zatím nehodnoceno</span>`;
+                } else {
+                    voters.forEach(user => {
+                        if (votes[user] === true) {
+                            voteDetailsHtml += `<span class="px-2 py-0.5 rounded-lg bg-green-500/20 text-green-300 border border-green-500/30"><i class="fa-solid fa-thumbs-up"></i> ${user}</span>`;
+                        } else {
+                            voteDetailsHtml += `<span class="px-2 py-0.5 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30"><i class="fa-solid fa-thumbs-down"></i> ${user}</span>`;
+                        }
+                    });
+                }
+                voteDetailsHtml += '</div>';
 
                 card.innerHTML = `
                     <div class="flex items-center gap-4 flex-1">
@@ -276,21 +471,170 @@
                             ${todo.completed ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
                         </button>
                         <div class="flex-1">
-                            <p class="font-medium ${todo.completed ? 'line-through text-gray-400' : 'text-white'}">${todo.text}</p>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <p class="font-medium ${todo.completed ? 'line-through text-gray-400' : 'text-white'}">${todo.text}</p>
+                                ${statusBadge}
+                            </div>
                             <div class="flex items-center gap-3 text-xs text-gray-400 mt-1">
                                 <span class="text-pink-300/80"><i class="fa-regular fa-calendar text-pink-500"></i> ${formatDate(todo.date)}</span>
                                 <span>•</span>
-                                <span><i class="fa-regular fa-user text-purple-400"></i> ${todo.author}</span>
+                                <span><i class="fa-regular fa-user text-purple-400"></i> Přidal: ${todo.author}</span>
                             </div>
                         </div>
                     </div>
-                    <button onclick="deleteTodo(${todo.id})" class="text-gray-500 hover:text-red-400 transition p-2" title="Smazat">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
+                    
+                    <div class="flex items-center justify-between w-full md:w-auto gap-4">
+                        ${voteDetailsHtml}
+                        <button onclick="deleteTodo(${todo.id})" class="text-gray-500 hover:text-red-400 transition p-2" title="Smazat">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
                 `;
 
                 listEl.appendChild(card);
             });
+        }
+
+        /* TINDER SWIPE LOGIC */
+        function getUnvotedTodos() {
+            return todos.filter(todo => !(todo.votes && todo.votes.hasOwnProperty(currentUser)));
+        }
+
+        function renderTinderDeck() {
+            const deck = document.getElementById('swipe-deck');
+            deck.innerHTML = '';
+
+            const unvoted = getUnvotedTodos();
+
+            if (unvoted.length === 0) {
+                deck.innerHTML = `
+                    <div class="glass-card p-8 rounded-3xl text-center max-w-sm border border-pink-500/30">
+                        <div class="w-16 h-16 bg-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-pink-400 text-2xl">
+                            <i class="fa-solid fa-check-double"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Vše ohodnoceno!</h3>
+                        <p class="text-sm text-gray-400 mb-4">Ohodnotil/a jsi všechny dostupné nápady. Přidej v Seznamu nové nebo počkej na drahou polovičku!</p>
+                        <button onclick="switchTab('list')" class="px-4 py-2 rounded-xl neon-btn text-xs font-bold text-white">Zobrazit výsledky a shody</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const current = unvoted[0];
+
+            const card = document.createElement('div');
+            card.className = 'swipe-card';
+            card.id = 'active-swipe-card';
+
+            card.innerHTML = `
+                <div class="stamp stamp-like" id="stamp-like">SUPER</div>
+                <div class="stamp stamp-dislike" id="stamp-dislike">NE-E</div>
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">
+                            <i class="fa-regular fa-calendar"></i> ${formatDate(current.date)}
+                        </span>
+                        <span class="text-xs text-purple-300 font-medium">Od: ${current.author}</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white leading-snug mt-4">${current.text}</h3>
+                </div>
+
+                <div class="pt-4 border-t border-white/10 text-center">
+                    <p class="text-xs text-gray-400">Táhni vpravo pro LAJK, vlevo pro DISLAJK</p>
+                </div>
+            `;
+
+            deck.appendChild(card);
+            initSwipeEvents(card, current.id);
+        }
+
+        function initSwipeEvents(card, todoId) {
+            let startX = 0;
+            let currentX = 0;
+            let isDragging = false;
+
+            const stampLike = card.querySelector('#stamp-like');
+            const stampDislike = card.querySelector('#stamp-dislike');
+
+            function onStart(e) {
+                isDragging = true;
+                startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            }
+
+            function onMove(e) {
+                if (!isDragging) return;
+                const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                currentX = x - startX;
+                const rotate = currentX * 0.08;
+
+                card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
+
+                if (currentX > 30) {
+                    stampLike.style.opacity = Math.min(currentX / 100, 1);
+                    stampDislike.style.opacity = 0;
+                } else if (currentX < -30) {
+                    stampDislike.style.opacity = Math.min(Math.abs(currentX) / 100, 1);
+                    stampLike.style.opacity = 0;
+                } else {
+                    stampLike.style.opacity = 0;
+                    stampDislike.style.opacity = 0;
+                }
+            }
+
+            function onEnd() {
+                if (!isDragging) return;
+                isDragging = false;
+
+                if (currentX > 100) {
+                    castVote(todoId, true);
+                } else if (currentX < -100) {
+                    castVote(todoId, false);
+                } else {
+                    card.style.transform = 'translateX(0px) rotate(0deg)';
+                    stampLike.style.opacity = 0;
+                    stampDislike.style.opacity = 0;
+                }
+            }
+
+            card.addEventListener('mousedown', onStart);
+            card.addEventListener('mousemove', onMove);
+            card.addEventListener('mouseup', onEnd);
+            card.addEventListener('mouseleave', onEnd);
+
+            card.addEventListener('touchstart', onStart);
+            card.addEventListener('touchmove', onMove);
+            card.addEventListener('touchend', onEnd);
+        }
+
+        function handleButtonSwipe(isLike) {
+            const unvoted = getUnvotedTodos();
+            if (unvoted.length === 0) return;
+
+            const card = document.getElementById('active-swipe-card');
+            if (card) {
+                const moveX = isLike ? 300 : -300;
+                const rotate = isLike ? 20 : -20;
+                card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+                card.style.transform = `translateX(${moveX}px) rotate(${rotate}deg)`;
+                card.style.opacity = 0;
+                setTimeout(() => {
+                    castVote(unvoted[0].id, isLike);
+                }, 300);
+            }
+        }
+
+        function castVote(todoId, isLike) {
+            todos = todos.map(todo => {
+                if (todo.id === todoId) {
+                    const votes = todo.votes || {};
+                    votes[currentUser] = isLike;
+                    return { ...todo, votes };
+                }
+                return todo;
+            });
+
+            localStorage.setItem('bucket_todos', JSON.stringify(todos));
+            renderTinderDeck();
         }
     </script>
 </body>
