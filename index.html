@@ -5,18 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plánovač Rande</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen pb-12 font-sans">
+<body class="bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-gray-100 min-h-screen pb-12 font-sans transition-colors duration-300">
 
   <!-- LOGIN SCREEN -->
-  <div id="login-screen" class="min-h-screen bg-rose-50 flex items-center justify-center p-4">
-    <div class="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 border border-rose-100 text-center">
-      <div class="w-16 h-16 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+  <div id="login-screen" class="min-h-screen bg-rose-50 dark:bg-slate-950 flex items-center justify-center p-4 transition-colors duration-300">
+    <div class="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-8 border border-rose-100 dark:border-rose-900/30 text-center">
+      <div class="w-16 h-16 bg-rose-100 dark:bg-rose-950 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
         <i class="fa-solid fa-heart"></i>
       </div>
-      <h1 class="text-2xl font-bold text-gray-800 mb-2">Plánovač Rande</h1>
-      <p class="text-gray-500 text-sm mb-6">Zadej své jméno pro vstup (Jirka nebo Terezka)</p>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-rose-100 mb-2">Plánovač Rande</h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Zadej své jméno pro vstup (Jirka nebo Terezka)</p>
       
       <form id="login-form" class="space-y-4">
         <div>
@@ -25,13 +30,13 @@
             id="login-input"
             placeholder="Tvoje jméno..."
             required
-            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent text-center font-medium"
+            class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-800 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-transparent text-center font-medium"
           />
         </div>
-        <p id="login-error" class="text-rose-500 text-xs font-semibold hidden"></p>
+        <p id="login-error" class="text-rose-500 dark:text-rose-400 text-xs font-semibold hidden"></p>
         <button
           type="submit"
-          class="w-full bg-rose-500 hover:bg-rose-600 text-white font-semibold py-3 rounded-xl shadow-lg shadow-rose-200 transition duration-200"
+          class="w-full bg-rose-500 hover:bg-rose-600 text-white font-semibold py-3 rounded-xl shadow-lg shadow-rose-200 dark:shadow-rose-950/50 transition duration-200"
         >
           Vstoupit
         </button>
@@ -42,23 +47,33 @@
   <!-- MAIN APP SCREEN -->
   <div id="app-screen" class="hidden">
     <!-- Header -->
-    <header class="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
+    <header class="bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 sticky top-0 z-10 shadow-sm transition-colors duration-300">
       <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <div class="bg-rose-500 p-2 rounded-xl text-white flex items-center justify-center w-9 h-9">
             <i class="fa-solid fa-heart"></i>
           </div>
-          <span class="font-bold text-lg text-gray-800">Plánovač Rande</span>
+          <span class="font-bold text-lg text-gray-800 dark:text-rose-100">Plánovač Rande</span>
         </div>
         
-        <div class="flex items-center space-x-4">
-          <div class="flex items-center space-x-2 bg-gray-100 px-3 py-1.5 rounded-full">
+        <div class="flex items-center space-x-3">
+          <!-- Dark Mode Toggle -->
+          <button 
+            id="theme-toggle-btn"
+            class="p-2 text-gray-400 hover:text-rose-500 dark:text-rose-400 dark:hover:text-rose-300 rounded-xl transition"
+            title="Přepnout režim"
+          >
+            <i id="theme-icon" class="fa-solid fa-moon"></i>
+          </button>
+
+          <div class="flex items-center space-x-2 bg-gray-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
             <i class="fa-solid fa-user text-rose-500 text-xs"></i>
             <span id="user-display" class="text-sm font-medium"></span>
           </div>
+          
           <button 
             id="logout-btn"
-            class="text-gray-400 hover:text-gray-600 p-1 rounded-lg transition"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 rounded-lg transition"
             title="Odhlásit se"
           >
             <i class="fa-solid fa-right-from-bracket"></i>
@@ -72,15 +87,15 @@
       <div class="flex flex-wrap gap-3 mb-6 items-center justify-between">
         <button
           id="toggle-add-btn"
-          class="flex items-center space-x-2 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-rose-100 transition"
+          class="flex items-center space-x-2 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-rose-100 dark:shadow-rose-950/40 transition"
         >
           <i class="fa-solid fa-plus"></i>
-          <span>Přidat nápad od Jirky</span>
+          <span id="add-btn-text">Přidat nový nápad</span>
         </button>
 
         <button
           id="random-btn"
-          class="flex items-center space-x-2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-purple-100 transition"
+          class="flex items-center space-x-2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-purple-100 dark:shadow-purple-950/40 transition"
         >
           <i class="fa-solid fa-wand-magic-sparkles"></i>
           <span>Vylosovat rande</span>
@@ -88,15 +103,15 @@
       </div>
 
       <!-- Add Form Modal/Box -->
-      <div id="add-form-container" class="hidden mb-6 bg-white p-4 rounded-2xl border border-rose-100 shadow-sm">
-        <h3 class="text-sm font-semibold text-gray-500 mb-2">Nový nápad (Autor: Jirka)</h3>
+      <div id="add-form-container" class="hidden mb-6 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-rose-100 dark:border-slate-700 shadow-sm">
+        <h3 id="add-form-title" class="text-sm font-semibold text-gray-500 dark:text-rose-300 mb-2">Nový nápad</h3>
         <form id="add-idea-form" class="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             id="idea-text-input"
             placeholder="Co podnikneme?..."
             required
-            class="flex-1 px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-400"
+            class="flex-1 px-4 py-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-400"
           />
           <div class="flex gap-2">
             <button
@@ -108,7 +123,7 @@
             <button
               type="button"
               id="cancel-add-btn"
-              class="bg-gray-100 text-gray-500 px-4 py-2 rounded-xl font-medium hover:bg-gray-200 transition"
+              class="bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-300 px-4 py-2 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-slate-600 transition"
             >
               Zrušit
             </button>
@@ -117,17 +132,17 @@
       </div>
 
       <!-- Filters -->
-      <div class="flex space-x-2 border-b border-gray-200 mb-6 pb-2 overflow-x-auto">
-        <button data-filter="all" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap bg-white text-rose-500 shadow-sm border border-gray-100">
+      <div class="flex space-x-2 border-b border-gray-200 dark:border-slate-800 mb-6 pb-2 overflow-x-auto">
+        <button data-filter="all" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap bg-white dark:bg-slate-800 text-rose-500 shadow-sm border border-gray-100 dark:border-slate-700">
           Všechny
         </button>
-        <button data-filter="pending" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 hover:text-gray-700">
+        <button data-filter="pending" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
           Čeká na schválení
         </button>
-        <button data-filter="approved" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 hover:text-gray-700">
+        <button data-filter="approved" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
           Schválené
         </button>
-        <button data-filter="rejected" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 hover:text-gray-700">
+        <button data-filter="rejected" class="filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
           Zamítnuté
         </button>
       </div>
@@ -140,15 +155,66 @@
   </div>
 
   <script>
+    // Funny errors for invalid names
+    const funnyErrors = [
+      "Stůj! Tady mají přístup jen zamilovaní! Ty mezi ne nepatříš ⛔",
+      "Pěkný pokus, ale tohle je tajná zóna jen pro Jirku a Terezku! 🤫",
+      "Přístup odepřen! Tento plánovač pojme jen dva vyvolené. 💖",
+      "Chyba 404: Láska nenalezena. Zadej správné jméno! 😂"
+    ];
+
+    // Default ideas list generator until 31.12.2026
+    function generateInitialIdeas() {
+      const baseIdeas = [
+        'Piknik v parku s deskovkami',
+        'Návštěva únikové hry',
+        'Domácí kino + tvorba vlastní pizzy',
+        'Procházka při západu slunce a zmrzlina',
+        'Společný večer bez telefonů u svíček',
+        'Výlet na neznámé místo v okolí',
+        'Jízda na motokárách',
+        'Wellness & Sauna večer',
+        'Návštěva botanické zahrady nebo ZOO',
+        'Ochutnávka neznámých sladkostí ze světa',
+        'Noc pod širákem / stanování',
+        'Bruslení nebo bowlingový turnaj',
+        'Společná příprava tříchodového menu',
+        'Návštěva hvězdárny / pozorování hvězd',
+        'Střílení na střelnici / Laser Game'
+      ];
+
+      const result = [];
+      let currentDate = new Date(2026, 7, 1); // 1. srpna 2026
+      const endDate = new Date(2026, 11, 31); // 31. prosince 2026
+      let idCounter = 1;
+
+      while (currentDate <= endDate) {
+        const text = baseIdeas[(idCounter - 1) % baseIdeas.length];
+        const formattedDate = currentDate.toISOString().split('T')[0];
+        
+        result.push({
+          id: idCounter,
+          text: text,
+          createdBy: 'Jirka',
+          status: idCounter % 3 === 0 ? 'approved' : 'pending',
+          date: formattedDate
+        });
+
+        // Přidáme týden (7 dní) pro další nápad
+        currentDate.setDate(currentDate.getDate() + 7);
+        idCounter++;
+      }
+
+      return result;
+    }
+
     // App State
     let currentUser = localStorage.getItem('rande_user') || null;
     let currentFilter = 'all';
-    
-    // Default data if empty
-    let ideas = JSON.parse(localStorage.getItem('rande_napady_jirka')) || [
-      { id: 1, text: 'Piknik v parku s deskovkami', createdBy: 'Jirka', status: 'pending', date: '2026-08-01' },
-      { id: 2, text: 'Návštěva únikové hry', createdBy: 'Jirka', status: 'approved', date: '2026-08-02' }
-    ];
+    let isDarkMode = localStorage.getItem('rande_theme') === 'dark';
+
+    // Fetch initial ideas or load saved ones
+    let ideas = JSON.parse(localStorage.getItem('rande_napady_jirka')) || generateInitialIdeas();
 
     // DOM Elements
     const loginScreen = document.getElementById('login-screen');
@@ -159,16 +225,38 @@
     const userDisplay = document.getElementById('user-display');
     const logoutBtn = document.getElementById('logout-btn');
     const toggleAddBtn = document.getElementById('toggle-add-btn');
+    const addBtnText = document.getElementById('add-btn-text');
     const addFormContainer = document.getElementById('add-form-container');
+    const addFormTitle = document.getElementById('add-form-title');
     const addIdeaForm = document.getElementById('add-idea-form');
     const ideaTextInput = document.getElementById('idea-text-input');
     const cancelAddBtn = document.getElementById('cancel-add-btn');
     const ideasList = document.getElementById('ideas-list');
     const randomBtn = document.getElementById('random-btn');
     const filterBtns = document.querySelectorAll('.filter-btn');
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const themeIcon = document.getElementById('theme-icon');
 
-    // Init
+    // Init Theme
+    function applyTheme() {
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+        themeIcon.className = 'fa-solid fa-sun';
+      } else {
+        document.documentElement.classList.remove('dark');
+        themeIcon.className = 'fa-solid fa-moon';
+      }
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      isDarkMode = !isDarkMode;
+      localStorage.setItem('rande_theme', isDarkMode ? 'dark' : 'light');
+      applyTheme();
+    });
+
+    // Init App
     function init() {
+      applyTheme();
       if (currentUser) {
         showApp();
       } else {
@@ -189,6 +277,8 @@
       loginScreen.classList.add('hidden');
       appScreen.classList.remove('hidden');
       userDisplay.textContent = currentUser;
+      addBtnText.textContent = `Přidat nápad (${currentUser})`;
+      addFormTitle.textContent = `Nový nápad (Autor: ${currentUser})`;
       renderIdeas();
     }
 
@@ -203,7 +293,8 @@
       } else if (lowerVal === 'terezka') {
         currentUser = 'Terezka';
       } else {
-        loginError.textContent = 'Přístup povolen pouze pro Jirku a Terezku!';
+        const randomErr = funnyErrors[Math.floor(Math.random() * funnyErrors.length)];
+        loginError.textContent = randomErr;
         loginError.classList.remove('hidden');
         return;
       }
@@ -243,7 +334,7 @@
       const newIdea = {
         id: Date.now(),
         text: text,
-        createdBy: 'Jirka', // Vždy natvrdo od Jirky
+        createdBy: currentUser, // Nastaví aktuálně přihlášeného (Jirka nebo Terezka)
         status: 'pending',
         date: new Date().toISOString().split('T')[0]
       };
@@ -260,9 +351,9 @@
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         filterBtns.forEach(b => {
-          b.className = "filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 hover:text-gray-700";
+          b.className = "filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200";
         });
-        btn.className = "filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap bg-white text-rose-500 shadow-sm border border-gray-100";
+        btn.className = "filter-btn px-3 py-1.5 rounded-lg text-sm font-medium transition whitespace-nowrap bg-white dark:bg-slate-800 text-rose-500 shadow-sm border border-gray-100 dark:border-slate-700";
         
         currentFilter = btn.dataset.filter;
         renderIdeas();
@@ -277,7 +368,7 @@
         return;
       }
       const random = available[Math.floor(Math.random() * available.length)];
-      alert(`Dnešní rande: ${random.text}! 💕`);
+      alert(`Dnešní rande (${random.createdBy}): ${random.text}! 💕`);
     });
 
     // Item Actions (Status, Delete)
@@ -304,9 +395,9 @@
 
       if (filtered.length === 0) {
         ideasList.innerHTML = `
-          <div class="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200">
-            <i class="fa-solid fa-compass text-4xl text-gray-300 mb-2"></i>
-            <p class="text-gray-500">Žádné nápady v této kategorii.</p>
+          <div class="text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-200 dark:border-slate-700">
+            <i class="fa-solid fa-compass text-4xl text-gray-300 dark:text-slate-600 mb-2"></i>
+            <p class="text-gray-500 dark:text-gray-400">Žádné nápady v této kategorii.</p>
           </div>
         `;
         return;
@@ -317,45 +408,50 @@
         if (idea.status === 'pending') {
           statusHtml = `
             <div class="flex items-center space-x-1">
-              <button onclick="changeStatus(${idea.id}, 'approved')" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100 transition" title="Schválit">
+              <button onclick="changeStatus(${idea.id}, 'approved')" class="p-2 bg-green-50 dark:bg-green-950/40 text-green-600 dark:text-green-400 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/60 transition" title="Schválit">
                 <i class="fa-solid fa-check"></i>
               </button>
-              <button onclick="changeStatus(${idea.id}, 'rejected')" class="p-2 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-100 transition" title="Zamítnout">
+              <button onclick="changeStatus(${idea.id}, 'rejected')" class="p-2 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-xl hover:bg-rose-100 dark:hover:bg-rose-900/60 transition" title="Zamítnout">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
           `;
         } else if (idea.status === 'approved') {
           statusHtml = `
-            <span class="flex items-center space-x-1 bg-green-100 text-green-700 text-xs px-2.5 py-1 rounded-full font-medium">
+            <span class="flex items-center space-x-1 bg-green-100 dark:bg-green-950/60 text-green-700 dark:text-green-300 text-xs px-2.5 py-1 rounded-full font-medium">
               <i class="fa-solid fa-circle-check"></i>
               <span>Schváleno</span>
             </span>
           `;
         } else if (idea.status === 'rejected') {
           statusHtml = `
-            <span class="flex items-center space-x-1 bg-gray-100 text-gray-500 text-xs px-2.5 py-1 rounded-full font-medium">
+            <span class="flex items-center space-x-1 bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-gray-400 text-xs px-2.5 py-1 rounded-full font-medium">
               <i class="fa-solid fa-circle-xmark"></i>
               <span>Zamítnuto</span>
             </span>
           `;
         }
 
+        const isJirka = idea.createdBy === 'Jirka';
+        const authorBadgeClass = isJirka 
+          ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300' 
+          : 'bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300';
+
         return `
-          <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between gap-4">
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-slate-700/60 shadow-sm flex items-center justify-between gap-4 transition-colors duration-300">
             <div class="flex-1">
               <div class="flex items-center space-x-2 mb-1">
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">
-                  Jirka
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${authorBadgeClass}">
+                  ${idea.createdBy}
                 </span>
-                <span class="text-xs text-gray-400">${idea.date}</span>
+                <span class="text-xs text-gray-400 dark:text-slate-500">${idea.date}</span>
               </div>
-              <p class="text-gray-800 font-medium">${idea.text}</p>
+              <p class="text-gray-800 dark:text-gray-100 font-medium">${idea.text}</p>
             </div>
 
             <div class="flex items-center space-x-2">
               ${statusHtml}
-              <button onclick="deleteIdea(${idea.id})" class="p-2 text-gray-300 hover:text-rose-500 transition rounded-xl" title="Smazat">
+              <button onclick="deleteIdea(${idea.id})" class="p-2 text-gray-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 transition rounded-xl" title="Smazat">
                 <i class="fa-solid fa-trash-can"></i>
               </button>
             </div>
