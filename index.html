@@ -26,7 +26,7 @@
         <i class="fa-solid fa-heart"></i>
       </div>
       <h1 class="text-2xl font-bold text-gray-800 dark:text-rose-100 mb-2">Náš Bucket-List</h1>
-      <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Zadej své jméno pro vstup</p>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Zadej své křestní jméno pro vstup</p>
       
       <form id="login-form" class="space-y-4">
         <div>
@@ -58,7 +58,7 @@
           <div class="bg-rose-500 p-2 rounded-xl text-white flex items-center justify-center w-9 h-9">
             <i class="fa-solid fa-heart"></i>
           </div>
-          <span class="font-bold text-lg text-gray-800 dark:text-rose-100">Plánovač Rande</span>
+          <span class="font-bold text-lg text-gray-800 dark:text-rose-100">Náš Bucket-List</span>
         </div>
         
         <div class="flex items-center space-x-3">
@@ -88,15 +88,19 @@
 
     <main class="max-w-3xl mx-auto px-4 pt-6">
       
-      <!-- NAVIGATION TABS (Tinder vs Seznam) -->
-      <div class="flex justify-center mb-6 border-b border-gray-200 dark:border-slate-800">
-        <button id="view-tinder-btn" class="px-6 py-2.5 font-bold text-sm border-b-2 border-rose-500 text-rose-500 flex items-center space-x-2">
+      <!-- NAVIGATION TABS -->
+      <div class="flex justify-center mb-6 border-b border-gray-200 dark:border-slate-800 overflow-x-auto">
+        <button id="view-tinder-btn" class="px-5 py-2.5 font-bold text-sm border-b-2 border-rose-500 text-rose-500 flex items-center space-x-2 whitespace-nowrap">
           <i class="fa-solid fa-fire text-rose-500"></i>
-          <span>Tinder Mód</span>
+          <span>Swipe Mód</span>
         </button>
-        <button id="view-list-btn" class="px-6 py-2.5 font-bold text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center space-x-2">
+        <button id="view-list-btn" class="px-5 py-2.5 font-bold text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center space-x-2 whitespace-nowrap">
           <i class="fa-solid fa-list-ul"></i>
           <span>Přehled nápadů</span>
+        </button>
+        <button id="view-calendar-btn" class="px-5 py-2.5 font-bold text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center space-x-2 whitespace-nowrap">
+          <i class="fa-solid fa-calendar-days"></i>
+          <span>Kalendář</span>
         </button>
       </div>
 
@@ -133,7 +137,7 @@
             class="flex items-center space-x-2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-purple-100 dark:shadow-purple-950/40 transition"
           >
             <i class="fa-solid fa-wand-magic-sparkles"></i>
-            <span>Vylosovat rande</span>
+            <span>Vylosovat aktivitu</span>
           </button>
         </div>
 
@@ -179,17 +183,26 @@
         <div id="ideas-list" class="space-y-3"></div>
       </div>
 
+      <!-- CALENDAR MODE SECTION -->
+      <div id="calendar-section" class="hidden space-y-8">
+        <div class="text-center mb-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Přehled plánovaných aktivit od 2. 8. 2026 do 31. 12. 2026</p>
+        </div>
+        <div id="calendar-container" class="space-y-6"></div>
+      </div>
+
     </main>
   </div>
 
   <script>
     const funnyErrors = [
-      "Stůj! Tady mají přístup jen zamilovaní! Ty mezi ně nepatříš ⛔"
-      "Přístup odepřen! Tento plánovač pojme jen dva vyvolené. 💖",
-      "Chyba 404: Láska nenalezena. Zadej správné jméno! 😂"
+      "Stůj! Tady mají přístup jen autorizovaní uživatelé! ⛔",
+      "Pěkný pokus, ale toto jméno není v systému schváleno! 🤫",
+      "Přístup odepřen! Zadej správné jméno. 💖",
+      "Chyba 404: Uživatel nenalezen. Zkus to znovu! 😂"
     ];
 
-    // Generátor nápadů až do 31.12.2026
+    // Generátor nápadů od 2. 8. 2026 do 31. 12. 2026
     function generateFullIdeas() {
       const baseIdeas = [
         'Piknik v parku s deskovkami',
@@ -210,8 +223,8 @@
       ];
 
       const result = [];
-      let currentDate = new Date(2026, 7, 1); // Od srpna 2026
-      const endDate = new Date(2026, 11, 31); // Do 31. prosince 2026
+      let currentDate = new Date(2026, 7, 2); // 2. srpna 2026
+      const endDate = new Date(2026, 11, 31); // 31. prosince 2026
       let idCounter = 1;
 
       while (currentDate <= endDate) {
@@ -221,7 +234,7 @@
         result.push({
           id: idCounter,
           text: text,
-          createdBy: 'Jirka',
+          createdBy: idCounter % 2 === 0 ? 'Terezka' : 'Jirka',
           status: 'pending',
           date: formattedDate
         });
@@ -233,16 +246,16 @@
     }
 
     // App State
-    let currentUser = localStorage.getItem('rande_user') || null;
+    let currentUser = localStorage.getItem('bucket_user') || null;
     let currentFilter = 'all';
-    let isDarkMode = localStorage.getItem('rande_theme') === 'dark';
+    let isDarkMode = localStorage.getItem('bucket_theme') === 'dark';
 
-    // Načtení dat (pokud je starý seznam moc krátký, automaticky dogenerujeme do 31.12.2026)
-    let saved = localStorage.getItem('rande_napady_jirka');
+    // Načtení dat
+    let saved = localStorage.getItem('bucket_napady');
     let ideas = saved ? JSON.parse(saved) : generateFullIdeas();
-    if (ideas.length < 10) {
+    if (!saved || ideas.length < 10) {
       ideas = generateFullIdeas();
-      localStorage.setItem('rande_napady_jirka', JSON.stringify(ideas));
+      localStorage.setItem('bucket_napady', JSON.stringify(ideas));
     }
 
     // DOM Elements
@@ -256,8 +269,10 @@
 
     const viewTinderBtn = document.getElementById('view-tinder-btn');
     const viewListBtn = document.getElementById('view-list-btn');
+    const viewCalendarBtn = document.getElementById('view-calendar-btn');
     const tinderSection = document.getElementById('tinder-section');
     const listSection = document.getElementById('list-section');
+    const calendarSection = document.getElementById('calendar-section');
 
     const toggleAddBtn = document.getElementById('toggle-add-btn');
     const addBtnText = document.getElementById('add-btn-text');
@@ -285,25 +300,41 @@
 
     themeToggleBtn.addEventListener('click', () => {
       isDarkMode = !isDarkMode;
-      localStorage.setItem('rande_theme', isDarkMode ? 'dark' : 'light');
+      localStorage.setItem('bucket_theme', isDarkMode ? 'dark' : 'light');
       applyTheme();
     });
 
     // Navigation Switcher
-    viewTinderBtn.addEventListener('click', () => {
-      tinderSection.classList.remove('hidden');
+    function resetNav() {
+      tinderSection.classList.add('hidden');
       listSection.classList.add('hidden');
-      viewTinderBtn.className = "px-6 py-2.5 font-bold text-sm border-b-2 border-rose-500 text-rose-500 flex items-center space-x-2";
-      viewListBtn.className = "px-6 py-2.5 font-bold text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center space-x-2";
+      calendarSection.classList.add('hidden');
+
+      const inactiveClass = "px-5 py-2.5 font-bold text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center space-x-2 whitespace-nowrap";
+      viewTinderBtn.className = inactiveClass;
+      viewListBtn.className = inactiveClass;
+      viewCalendarBtn.className = inactiveClass;
+    }
+
+    viewTinderBtn.addEventListener('click', () => {
+      resetNav();
+      tinderSection.classList.remove('hidden');
+      viewTinderBtn.className = "px-5 py-2.5 font-bold text-sm border-b-2 border-rose-500 text-rose-500 flex items-center space-x-2 whitespace-nowrap";
       renderTinder();
     });
 
     viewListBtn.addEventListener('click', () => {
+      resetNav();
       listSection.classList.remove('hidden');
-      tinderSection.classList.add('hidden');
-      viewListBtn.className = "px-6 py-2.5 font-bold text-sm border-b-2 border-rose-500 text-rose-500 flex items-center space-x-2";
-      viewTinderBtn.className = "px-6 py-2.5 font-bold text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center space-x-2";
+      viewListBtn.className = "px-5 py-2.5 font-bold text-sm border-b-2 border-rose-500 text-rose-500 flex items-center space-x-2 whitespace-nowrap";
       renderIdeas();
+    });
+
+    viewCalendarBtn.addEventListener('click', () => {
+      resetNav();
+      calendarSection.classList.remove('hidden');
+      viewCalendarBtn.className = "px-5 py-2.5 font-bold text-sm border-b-2 border-rose-500 text-rose-500 flex items-center space-x-2 whitespace-nowrap";
+      renderCalendar();
     });
 
     function init() {
@@ -316,7 +347,7 @@
     }
 
     function saveIdeas() {
-      localStorage.setItem('rande_napady_jirka', JSON.stringify(ideas));
+      localStorage.setItem('bucket_napady', JSON.stringify(ideas));
     }
 
     function showLogin() {
@@ -325,6 +356,7 @@
     }
 
     function showApp() {
+      loginScreen.classList.hidden = true;
       loginScreen.classList.add('hidden');
       appScreen.classList.remove('hidden');
       userDisplay.textContent = currentUser;
@@ -350,13 +382,13 @@
       }
 
       loginError.classList.add('hidden');
-      localStorage.setItem('rande_user', currentUser);
+      localStorage.setItem('bucket_user', currentUser);
       showApp();
     });
 
     logoutBtn.addEventListener('click', () => {
       currentUser = null;
-      localStorage.removeItem('rande_user');
+      localStorage.removeItem('bucket_user');
       loginInput.value = '';
       showLogin();
     });
@@ -384,23 +416,18 @@
       controls.classList.remove('hidden');
       currentTinderIdea = pending[0];
 
-      const isJirka = currentTinderIdea.createdBy === 'Jirka';
-      const badgeClass = isJirka 
-        ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300' 
-        : 'bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300';
-
       container.innerHTML = `
         <div class="card-swipe w-full bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-2xl rounded-3xl p-8 flex flex-col justify-between h-full">
           <div>
             <div class="flex justify-between items-center mb-4">
-              <span class="text-xs font-semibold px-3 py-1 rounded-full ${badgeClass}">
-                Navrhl: ${currentTinderIdea.createdBy}
+              <span class="text-xs font-semibold px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300">
+                Navrhl/a: ${currentTinderIdea.createdBy}
               </span>
               <span class="text-xs text-gray-400"><i class="fa-regular fa-calendar mr-1"></i>${currentTinderIdea.date}</span>
             </div>
             <p class="text-2xl font-bold text-gray-800 dark:text-white mt-4 leading-snug">${currentTinderIdea.text}</p>
           </div>
-          <p class="text-xs text-center text-gray-400 italic">Chceš tohle rande podniknout?</p>
+          <p class="text-xs text-center text-gray-400 italic">Chceš tuhle aktivitu zařadit do plánu?</p>
         </div>
       `;
     }
@@ -475,7 +502,7 @@
         return;
       }
       const random = available[Math.floor(Math.random() * available.length)];
-      alert(`Dnešní rande (${random.createdBy}): ${random.text}! 💕`);
+      alert(`Dnešní aktivita (${random.createdBy}): ${random.text}! 💕`);
     });
 
     window.changeStatus = function(id, status) {
@@ -539,16 +566,11 @@
           `;
         }
 
-        const isJirka = idea.createdBy === 'Jirka';
-        const badgeClass = isJirka 
-          ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300' 
-          : 'bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300';
-
         return `
           <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-slate-700/60 shadow-sm flex items-center justify-between gap-4 transition-colors duration-300">
             <div class="flex-1">
               <div class="flex items-center space-x-2 mb-1">
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${badgeClass}">
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300">
                   ${idea.createdBy}
                 </span>
                 <span class="text-xs text-gray-400 dark:text-slate-500">${idea.date}</span>
@@ -565,6 +587,90 @@
           </div>
         `;
       }).join('');
+    }
+
+    // CALENDAR RENDER LOGIC
+    function renderCalendar() {
+      const container = document.getElementById('calendar-container');
+      container.innerHTML = '';
+
+      const monthNames = [
+        "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
+        "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"
+      ];
+
+      const daysOfWeek = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
+
+      // Od srpna (7) do prosince (11) roku 2026
+      for (let month = 7; month <= 11; month++) {
+        const monthDiv = document.createElement('div');
+        monthDiv.className = "bg-white dark:bg-slate-800 p-5 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm";
+
+        const title = document.createElement('h3');
+        title.className = "text-lg font-bold text-gray-800 dark:text-rose-200 mb-4 text-center border-b border-gray-100 dark:border-slate-700 pb-2";
+        title.textContent = `${monthNames[month]} 2026`;
+        monthDiv.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = "grid grid-cols-7 gap-1 text-center";
+
+        // Dny v týdnu
+        daysOfWeek.forEach(day => {
+          const dayHeader = document.createElement('div');
+          dayHeader.className = "text-xs font-bold text-gray-400 pb-2";
+          dayHeader.textContent = day;
+          grid.appendChild(dayHeader);
+        });
+
+        const firstDayOfMonth = new Date(2026, month, 1);
+        let startingDay = firstDayOfMonth.getDay() - 1; // 0 pro Pondělí
+        if (startingDay === -1) startingDay = 6; // Neděle
+
+        const daysInMonth = new Date(2026, month + 1, 0).getDate();
+
+        // Prázdné buňky před 1. dnem v měsíci
+        for (let i = 0; i < startingDay; i++) {
+          const emptyCell = document.createElement('div');
+          emptyCell.className = "h-10";
+          grid.appendChild(emptyCell);
+        }
+
+        // Vykreslení dnů
+        for (let day = 1; day <= daysInMonth; day++) {
+          const cellDate = new Date(2026, month, day);
+          const dateString = cellDate.toISOString().split('T')[0];
+
+          const isBeforeStart = month === 7 && day < 2; // Před 2.8.2026
+          const dayIdeas = ideas.filter(i => i.date === dateString);
+
+          const cell = document.createElement('div');
+          cell.className = `h-10 rounded-xl flex flex-col items-center justify-center text-sm font-medium relative transition cursor-pointer`;
+
+          if (isBeforeStart) {
+            cell.classList.add('text-gray-300', 'dark:text-slate-700', 'cursor-not-allowed');
+          } else if (dayIdeas.length > 0) {
+            const hasApproved = dayIdeas.some(i => i.status === 'approved');
+            if (hasApproved) {
+              cell.classList.add('bg-green-500', 'text-white', 'font-bold', 'shadow-md', 'shadow-green-200', 'dark:shadow-none');
+            } else {
+              cell.classList.add('bg-rose-500', 'text-white', 'font-bold', 'shadow-md', 'shadow-rose-200', 'dark:shadow-none');
+            }
+
+            cell.addEventListener('click', () => {
+              const details = dayIdeas.map(i => `• ${i.text} (${i.createdBy}) - ${i.status}`).join('\n');
+              alert(`Datum: ${dateString}\n\nNaplánované aktivity:\n${details}`);
+            });
+          } else {
+            cell.classList.add('hover:bg-gray-100', 'dark:hover:bg-slate-700', 'text-gray-700', 'dark:text-gray-300');
+          }
+
+          cell.textContent = day;
+          grid.appendChild(cell);
+        }
+
+        monthDiv.appendChild(grid);
+        container.appendChild(monthDiv);
+      }
     }
 
     init();
